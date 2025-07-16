@@ -1,47 +1,41 @@
-const defaultResult = 0;
-let currentResult = defaultResult;
+const inputDisplay = document.getElementById('input-display');
+const expressionDisplay = document.getElementById('expression-display');
+const buttons = document.querySelectorAll('.btn');
+const clearBtn = document.getElementById('clear');
+const equalsBtn = document.getElementById('equals');
+const backspaceBtn = document.getElementById('backspace');
 
-function getUserInput() {
-    return parseInt(userInput.value);
-}
+let expression = '';
 
-function createAndWriteOutput(operator, resultBeforeCalc, calcNumber) {
-    const calcDescription = `${resultBeforeCalc} ${operator} ${calcNumber}`;
-    outputResult(currentResult, calcDescription);
+buttons.forEach(button => {
+  const value = button.dataset.value;
+
+  if (value) {
+    button.addEventListener('click', () => {
+      expression += value;
+      inputDisplay.value = expression;
+    });
   }
+});
 
-function add() {
-    const inputNumber = getUserInput();
-    const lastResult = currentResult;        
-    currentResult += inputNumber; 
-    createAndWriteOutput('+', lastResult, inputNumber);    
+equalsBtn.addEventListener('click', () => {
+  try {
+    const result = eval(expression);
+    expressionDisplay.textContent = expression.replace(/\*/g, '×').replace(/\//g, '÷');
+    inputDisplay.value = result;
+    expression = result.toString(); // allow continued calc
+  } catch (error) {
+    inputDisplay.value = 'Error';
   }
+});
 
-function subtract() {
+clearBtn.addEventListener('click', () => {
+  expression = '';
+  inputDisplay.value = '';
+  expressionDisplay.textContent = '';
+});
 
-    const inputNumber = getUserInput();
-    const lastResult = currentResult;        
-    currentResult -= inputNumber; 
-    createAndWriteOutput('-', lastResult, inputNumber);
-
-}
-
-function multiply() {
-    const inputNumber = getUserInput();
-    const lastResult = currentResult;        
-    currentResult *= inputNumber; 
-    createAndWriteOutput('*', lastResult, inputNumber);
-
-}
-
-function divide() {
-    const inputNumber = getUserInput();
-    const lastResult = currentResult;        
-    currentResult /= inputNumber; 
-    createAndWriteOutput('/', lastResult, inputNumber);    
-}
-
-addBtn.addEventListener("click", add);
-subtractBtn.addEventListener("click", subtract);
-multiplyBtn.addEventListener("click", multiply);
-divideBtn.addEventListener("click", divide);
+backspaceBtn.addEventListener('click', () => {
+  expression = expression.slice(0, -1);
+  inputDisplay.value = expression;
+});
